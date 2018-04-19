@@ -3,17 +3,34 @@ A series of short examples for understanding ProseMirror.
 
 ## Editor
 #### Get notified of updates and changes
-A plugin to know when something has changed in the editor (cursor position, selection, etc):
+A plugin to know when something has changed in the editor (cursor position, selection, etc) and hook up on the updates:
 ```js
 new Plugin({
   view() {
     return {
       update (update) {
-        // do something here such as eventBus.dispatch(update)
+        // do something here such as eventBus.dispatch('NEW-UPDATE', update)
       }
     }
   }
 })
+```
+You can also hook up on the transactions:
+```js
+const editorElement = document.querySelector('#my-editor');
+const contentElement = document.querySelector('#my-content');
+
+const editorView = new EditorView(editorElement, {
+  state: EditorState.create({
+    doc: DOMParser.fromSchema(schema).parse(contentElement),
+    plugins: plugins // an array of plugins
+  }),
+  dispatchTransaction (transaction) {
+    const newState = editorView.state.apply(transaction);
+    editorView.updateState(newState);
+    // do something here such as eventBus.dispatch('NEW-TRANSACTIION', transaction)
+  }
+});
 ```
 
 ## Commands
