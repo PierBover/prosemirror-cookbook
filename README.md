@@ -1,4 +1,4 @@
-# prosemirror-cookbook
+# ProseMirror Cookbook
 A series of short examples for understanding ProseMirror.
 
 ## Editor
