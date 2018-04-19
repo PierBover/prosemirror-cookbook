@@ -2,6 +2,7 @@
 A series of short examples for understanding ProseMirror.
 
 ## Editor
+#### Get notified of updates and changes
 A plugin to know when something has changed in the editor (cursor position, selection, etc):
 ```js
 new Plugin({
@@ -16,6 +17,7 @@ new Plugin({
 ```
 
 ## Commands
+#### Check the current active marks
 A helper function that returns an array with the active marks in the current selection. This is helpful if you have a custom menu and want to highlight the buttons of the marks that are applied (bold, italic, etc):
 ```js
 getCurrentMarks (editorView) {
@@ -35,6 +37,7 @@ getCurrentMarks (editorView) {
   return Array.from(selectionMarks);
 }
 ```
+#### Check the current available node types
 A helper function that returns an array with the node types that can be applied in the current selection or cursor position. This is helpful for example if you have a custom menu and want to enable/disable/highlight buttons to switch from heading to paragraph.
 ```js
 getAvailableBlockTypes (editorView, schema) {
@@ -51,7 +54,8 @@ getAvailableBlockTypes (editorView, schema) {
 ```
 
 ## Decorations
-A plugin for applying a decoration to the node where the cursor is:
+#### Apply a decoration where the cursor is
+A plugin that applies a decoration to the where the cursor is:
 ```js
 new Plugin({
   props: {
@@ -66,7 +70,7 @@ new Plugin({
   }
 })
 ```
-
+#### Apply a decoration to the selected node(s)
 A plugin for applying a decoration to the all the nodes that are "touched" by a selection:
 ```js
 new Plugin({
