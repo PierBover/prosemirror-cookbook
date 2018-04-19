@@ -72,7 +72,7 @@ getAvailableBlockTypes (editorView, schema) {
 
 ## Decorations
 #### Apply a decoration where the cursor is
-A plugin that applies a decoration to the where the cursor is:
+A plugin that applies a decoration to the node where the cursor is:
 ```js
 new Plugin({
   props: {
