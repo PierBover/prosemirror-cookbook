@@ -1,6 +1,8 @@
 # ProseMirror Cookbook
 A series of short examples for understanding ProseMirror.
 
+Don't hesitate to contribute to the repo!
+
 ## Editor
 #### Get notified of updates and changes
 A plugin to know when something has changed in the editor (cursor position, selection, etc) and hook up on the updates:
@@ -88,7 +90,7 @@ new Plugin({
 })
 ```
 #### Apply a decoration to the selected node(s)
-A plugin for applying a decoration to the all the nodes that are "touched" by a selection:
+A plugin for applying a decoration to all the nodes that are "touched" by a selection:
 ```js
 new Plugin({
   props: {
