@@ -60,26 +60,27 @@ Also check the [custom menu example](https://prosemirror.net/examples/menu/) for
 #### Get notified of updates and changes
 A plugin to know when something has changed in the editor (cursor position, selection, etc) and hook up on the updates:
 ```js
-new Plugin({
-  view() {
+import {EditorState, Plugin} from "prosemirror-state";
+
+const onUpdatePlugin = new Plugin({
+  view () {
     return {
-      update (update) {
-        // do something here such as eventBus.dispatch('NEW-UPDATE', update)
+      update (updatedEditorView) {
+        // do something here with updatedEditorView
       }
     }
   }
-})
-```
-You can also hook up on the transactions:
-```js
-const editorElement = document.querySelector('#my-editor');
-const contentElement = document.querySelector('#my-content');
+});
 
+const editorState = EditorState.create({
+  schema,
+  plugins: [onUpdatePlugin]
+});
+```
+You can also hookup on the transactions:
+```js
 const editorView = new EditorView(editorElement, {
-  state: EditorState.create({
-    doc: DOMParser.fromSchema(schema).parse(contentElement),
-    plugins: plugins // an array of plugins
-  }),
+  state: editorState,
   dispatchTransaction (transaction) {
     const newState = editorView.state.apply(transaction);
     editorView.updateState(newState);
@@ -126,6 +127,7 @@ getAvailableBlockTypes (editorView, schema) {
 ```
 
 ## Decorations
+
 #### Apply a decoration where the cursor is
 A plugin that applies a decoration to the node where the cursor is:
 ```js
