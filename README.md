@@ -28,16 +28,14 @@ let state = EditorState.create({
 });
 ```
 
-There are other commands in `prosemirror-commands` which you can use to trigger changes from a keyboard event, by using the `prosemirror-keymap`. For triggering commands from your UI see the [custom menu example](https://prosemirror.net/examples/menu/).
+These packages exist for your convenience and are not part of the core. You can replace them with your own once you are more comfortable with ProseMirror.
 
-Here are some common ones:
+There are other commands in `prosemirror-commands` which can be used to trigger changes. Here are some common ones:
 
 * `toggleMark` which allows you to toggle inline marks on/off on the selected text (eg: bold, italics, etc).
 * `setBlockType` which allows you to change the type of the current block (eg: paragraph, H1, image, etc).
 
 All the available commands are documented here: [https://prosemirror.net/docs/ref/#commands](https://prosemirror.net/docs/ref/#commands)
-
-These packages exist for your convenience and are not part of the core. You can replace them with your own once you are more comfortable with ProseMirror.
 
 #### Triggering changes from your code
 To dispatch changes you basically need to get the current state and the `dispatch` function from your editor view and call methods on `state.tr`. `tr` is an instance of the [Transaction](https://prosemirror.net/docs/ref/#state.Transaction) class.
@@ -54,7 +52,9 @@ deleteSelection (view) {
 deleteSelection(editorView);
 ```
 
-Again, you could call this command we've just created from a keyboard shortcut using the `prosemirror-keymap` as explained earlier, or from your logic. Commands are explained in more detail here: [https://prosemirror.net/docs/guide/#commands](https://prosemirror.net/docs/guide/#commands)
+Again, you could call this command we've just created from a keyboard shortcut using the `prosemirror-keymap` as explained earlier, or from your logic. Commands are explained in more detail here: [https://prosemirror.net/docs/guide/#commands](https://prosemirror.net/docs/guide/#commands).
+
+Also check the [custom menu example](https://prosemirror.net/examples/menu/) for more info on triggering commands from your UI.
 
 ## Editor
 #### Get notified of updates and changes
