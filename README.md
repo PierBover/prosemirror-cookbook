@@ -3,6 +3,59 @@ A series of short examples for understanding ProseMirror.
 
 Don't hesitate to contribute to the repo!
 
+## General concepts
+
+#### Triggering changes from the keyboard
+By default, a barebones editor will trigger text changes on a `contentEditable` element and no more. It won't create new paragraphs when pressing enter since ProseMirror is totally agnostic and this behavior is something that needs to be configured.
+
+The `prosemirror-keymap` plugin will allow you to hookup on keyboard events triggered by the editor. This plugin by itself will not trigger changes either.
+
+For example, you can configure `prosemirror-keymap` to trigger the `undo` and `redo` functions from the `prosemirror-history` plugin which would in turn interact with the editor and trigger those changes. Common keyboard commands (eg: creating a new paragraph when pressing enter, etc) can be found in the `baseKeymap` module of the `prosemirror-commands` plugin.
+
+```js
+import {undo, redo, history} from "prosemirror-history";
+import {keymap} from "prosemirror-keymap";
+import {baseKeymap} from "prosemirror-commands";
+
+
+let state = EditorState.create({
+  schema,
+  plugins: [
+    history(),
+    keymap({"Mod-z": undo, "Mod-y": redo}),
+    keymap(baseKeymap)
+  ]
+});
+```
+
+There are other commands in `prosemirror-commands` which you can use to trigger changes from a keyboard event, by using the `prosemirror-keymap`. For triggering commands from your UI see the [custom menu example](https://prosemirror.net/examples/menu/).
+
+Here are some common ones:
+
+* `toggleMark` which allows you to toggle inline marks on/off on the selected text (eg: bold, italics, etc).
+* `setBlockType` which allows you to change the type of the current block (eg: paragraph, H1, image, etc).
+
+All the available commands are documented here: [https://prosemirror.net/docs/ref/#commands](https://prosemirror.net/docs/ref/#commands)
+
+These packages exist for your convenience and are not part of the core. You can replace them with your own once you are more comfortable with ProseMirror.
+
+#### Triggering changes from your code
+To dispatch changes you basically need to get the current state and the `dispatch` function from your editor view and call methods on `state.tr`. `tr` is an instance of the [Transaction](https://prosemirror.net/docs/ref/#state.Transaction) class.
+
+```js
+deleteSelection (view) {
+  const state = view.state;
+  const dispatch = view.dispatch;
+  if (state.selection.empty) return false;
+  if (dispatch) dispatch(state.tr.deleteSelection())
+  return true;
+}
+
+deleteSelection(editorView);
+```
+
+Again, you could call this command we've just created from a keyboard shortcut using the `prosemirror-keymap` as explained earlier, or from your logic. Commands are explained in more detail here: [https://prosemirror.net/docs/guide/#commands](https://prosemirror.net/docs/guide/#commands)
+
 ## Editor
 #### Get notified of updates and changes
 A plugin to know when something has changed in the editor (cursor position, selection, etc) and hook up on the updates:
