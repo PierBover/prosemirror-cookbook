@@ -112,6 +112,17 @@ dispatch(state.tr.setSelection(TextSelection.create(state.doc, 345)))
 
 The idea here is that we're defining an empty [`TextSelection`](https://prosemirror.net/docs/ref/#state.TextSelection) with a single absolute position in the document. It's called an empty selection because both the start and end cursor of the selection would be the same. In the ProseMirror docs these two cursors are referred to as `anchor` and `head`.
 
+#### Get an HTML string from an editor state
+```js
+import {DOMSerializer} from 'prosemirror-model';
+
+function getHTMLStringFromState (state) {
+  const fragment = DOMSerializer.fromSchema(state.schema).serializeFragment(state.doc.content);
+  const div = document.createElement("div");
+  div.appendChild(fragment);
+  return div.innerHTML;
+}
+```
 ## Editor
 
 #### Get notified of updates and changes
@@ -123,8 +134,8 @@ const onUpdatePlugin = new Plugin({
   view () {
     return {
       update (updatedEditorView) {
-      	// For example, let's print the cursor position
-        const $cursor = updatedView.state.selection.$cursor;
+      	// For example, let's print the cursor position:
+        const $cursor = updatedEditorView.state.selection.$cursor;
         console.log('cursor position:', $cursor.pos);
       }
     }
