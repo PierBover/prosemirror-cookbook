@@ -3,6 +3,8 @@ This repo used to be a simple cookbook but I decided to convert this repo into "
 
 This is a work in progress. If you have any suggestion, please do not hesitate to create an issue or a PR.
 
+Also, check the [ProseMirror Utils](https://github.com/atlassian/prosemirror-utils) repo by Atlassian. Not only it is useful *per se*, but the source code offers a lot of information on how to to certain things.
+
 ## Basics
 
 #### Triggering changes from the keyboard
