@@ -1,9 +1,9 @@
-# ProseMirror for dummies
-This repo used to be a simple cookbook but I decided to convert this repo into "ProseMirror for dummies". In part because I wil most likely forget all the info written here, and in part because I'd like to help you, dear reader, in your struggle to use this library which is not for the faint of heart.
+# Pragmatic ProseMirror guide
+This repo used to be a simple cookbook but I decided to convert this repo into a more pragmatic guide that the official one. In part because I wil most likely forget all the info written here, and in part because I'd like to help you, dear reader, in your struggle to use this library which is not for the faint of heart.
 
 This is a work in progress. If you have any suggestion, please do not hesitate to create an issue or a PR.
 
-Also, check the [ProseMirror Utils](https://github.com/atlassian/prosemirror-utils) repo by Atlassian. Not only it is useful *per se*, but the source code offers a lot of information on how to to certain things.
+Also, check the [ProseMirror Utils](https://github.com/atlassian/prosemirror-utils) repo by Atlassian. Not only it is useful *per se*, but the source code offers a lot of information on how to do certain things.
 
 ## Basics
 
@@ -89,8 +89,8 @@ export function chainCommands(...commands) {
       const result = commands[i](state, dispatch, view);
       // If the command has executed `result` will be true
       if (result) {
-      	// On creation, some commands create a closure and return
-      	// an anonymous function so we can't really know their name...
+        // On creation, some commands create a closure and return
+        // an anonymous function so we can't really know their name...
         console.log(commands[i].name || 'anonymous function');
         return true;
       }
@@ -136,7 +136,7 @@ const onUpdatePlugin = new Plugin({
   view () {
     return {
       update (updatedEditorView) {
-      	// For example, let's print the cursor position:
+        // For example, let's print the cursor position:
         const $cursor = updatedEditorView.state.selection.$cursor;
         console.log('cursor position:', $cursor.pos);
       }
@@ -161,25 +161,51 @@ const editorView = new EditorView(editorElement, {
 });
 ```
 
-## Commands
-#### Check the current active marks
-This is a helper function that returns an array with the active marks in the current selection. This is helpful when we need to highlight the buttons of the marks that are applied (bold, italic, etc):
+## Utils
+#### Get the current active marks
+This is a helper function that returns an array with the names of the active marks in the current selection or cursor position. This is helpful when we need to highlight the buttons of the marks that are applied (bold, italic, etc):
 ```js
-function getCurrentMarks (editorView) {
-  const state = editorView.state;
-  const from = state.selection.from;
-  const to = state.selection.to;
+export function getActiveMarkCodes (view) {
+  const isEmpty = view.state.selection.empty;
+  const state = view.state;
 
-  // Set instead of array because there can't be duplicated values
-  const selectionMarks = new Set();
+  if (isEmpty) {
+    const $from = view.state.selection.$from;
+    const storedMarks = state.storedMarks;
 
-  state.doc.nodesBetween(from, to, (node) => {
-    node.marks.forEach((mark) => {
-      selectionMarks.add(mark.type.name);
-    });
+    // Return either the stored marks, or the marks at the cursor position.
+    // Stored marks are the marks that are going to be applied to the next input
+    // if you dispatched a mark toggle with an empty cursor.
+    if (storedMarks) {
+      return storedMarks.map((mark) => mark.type.name);
+    } else {
+      return $from.marks().map((mark) => mark.type.name);
+    }
+  } else {
+    const $head = view.state.selection.$head;
+    const $anchor = view.state.selection.$anchor;
+
+    // We're using a Set to not get duplicate values
+    const activeMarks = new Set();
+
+    // Here we're getting the marks at the head and anchor of the selection
+    $head.marks().forEach((mark) => activeMarks.add(mark.type.name));
+    $anchor.marks().forEach((mark) => activeMarks.add(mark.type.name));
+
+    return Array.from(activeMarks);
+  }
+}
+```
+#### Get the available marks
+Here we're iterating all the marks in the schema and test whether they can be applied with [`toggleMark`](https://prosemirror.net/docs/ref/#commands.toggleMark).
+```js
+export function getAvailableMarkCodes (editorView) {
+  const markTypes = editorView.state.schema.marks;
+
+  return Object.keys(markTypes).filter((key) => {
+    const mark = markTypes[key];
+    return toggleMark(mark)(editorView.state, null, editorView);
   });
-
-  return Array.from(selectionMarks);
 }
 ```
 #### Check the current available node types
@@ -200,6 +226,19 @@ function getAvailableBlockTypes (editorView, schema) {
 }
 ```
 
+## Working with nodes
+#### Creating a simple node
+Internally, ProseMirror uses the Node class to represent its state, but the best way of creating nodes is to use the [`create()`](https://prosemirror.net/docs/ref/#model.NodeType.create) method from the `NodeType` class:
+```js
+const node = state.schema.nodes.paragraph.create(null, null, null);
+```
+#### How to create text nodes
+```js
+// create a text node
+const textNode = state.schema.text("hello");
+// create a new node with the text node as a child
+const paragraphNode = state.schema.nodes.paragraph.create(null, textNode, null);
+```
 ## Decorations
 
 #### Apply a decoration where the cursor is
@@ -238,3 +277,8 @@ new Plugin({
   }
 })
 ```
+
+## Miscellaneous
+
+#### How to keep ProseMirror focused when clicking in your menu
+By default, the browser will remove the current selection and blur focused elements when a click happens. To prevent this, you need to use `event.preventDefault()` on the `mousedown` event of your clickable elements.
