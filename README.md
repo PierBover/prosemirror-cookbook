@@ -230,14 +230,14 @@ function getAvailableBlockTypes (editorView, schema) {
 #### Creating a simple node
 Internally, ProseMirror uses the Node class to represent its state, but the best way of creating nodes is to use the [`create()`](https://prosemirror.net/docs/ref/#model.NodeType.create) method from the `NodeType` class:
 ```js
-const node = state.schema.paragraph.create(null, null, null);
+const node = state.schema.nodes.paragraph.create(null, null, null);
 ```
 #### How to create text nodes
 ```js
 // create a text node
 const textNode = state.schema.text("hello");
 // create a new node with the text node as a child
-const paragraphNode = state.schema.paragraph.create(null, textNode, null);
+const paragraphNode = state.schema.nodes.paragraph.create(null, textNode, null);
 ```
 ## Decorations
 
